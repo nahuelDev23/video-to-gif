@@ -23,7 +23,7 @@ export default async function handler(
       if (err) return reject(err);
       resolve({ fields, files });
     });
-  });
+  }) as any;
   console.log(data?.files?.inputFile.filepath);
 
   const file = data?.files?.inputFile.filepath;
