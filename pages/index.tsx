@@ -1,6 +1,7 @@
 import { Button, Stack } from '@chakra-ui/react';
 import axios from 'axios'
 import type { NextPage } from 'next'
+import Link from 'next/link';
 import { useState } from 'react';
 
 import styles from '../styles/Home.module.css'
@@ -46,15 +47,14 @@ const Home: NextPage = () => {
       {loader && 'TirandoMagia...'}
 
       {
-        !loader && <a href="vertical.gif"
-          alt="alt text"
+        !loader && <Link href="vertical.gif"
           target="_blank"
           rel="noopener noreferrer" download>
           <Button>
             Click para ver nudes
           </Button>
 
-        </a>
+        </Link>
       }
 
 
