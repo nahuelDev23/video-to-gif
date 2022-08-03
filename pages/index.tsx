@@ -7,7 +7,7 @@ import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
   const [loader, setLoader] = useState(false)
-  const onChange = async (event) => {
+  const onChange = async (event: any) => {
     setLoader(true)
     event.preventDefault();
     const formData = new FormData();
