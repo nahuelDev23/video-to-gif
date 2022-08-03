@@ -1,4 +1,4 @@
-import { Button, Stack } from '@chakra-ui/react';
+import { Button, Stack, Text } from '@chakra-ui/react';
 import axios from 'axios'
 import type { NextPage } from 'next'
 import Link from 'next/link';
@@ -39,7 +39,7 @@ const Home: NextPage = () => {
     <Stack justifyContent='center' alignItems='center' minH='100vh'>
 
       <input type="file" onChange={onChange} />
-      {loader && 'TirandoMagia...'}
+      {loader && <Text>TirandoMagia...</Text>}
 
       {
         !loader && <a

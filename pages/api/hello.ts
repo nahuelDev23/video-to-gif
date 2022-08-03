@@ -37,7 +37,7 @@ export default async function handler(
         console.log(err);
       })
       .setStartTime('00:00:00')
-      .setDuration('5')
+      .setDuration('12')
       .size("500x830")
       .fps(30)
       .saveToFile("public/vertical.gif")
