@@ -27,13 +27,13 @@ const Home: NextPage = () => {
     // console.log(x);
     setLoader(false)
     if (x.status === 200) {
-      let link = document.createElement("a");
-      link.href = "vertical.gif";
-      link.target = "_blank"
-      link.rel = "noopener noreferrer"
-      link.download = "vertical.gif"
+      // let link = document.createElement("a");
+      // link.href = "vertical.gif";
+      // link.target = "_blank"
+      // link.rel = "noopener noreferrer"
+      // link.download = "vertical.gif"
 
-      link.click();
+      // link.click();
     }
 
 
