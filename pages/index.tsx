@@ -8,12 +8,12 @@ import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
   const [loader, setLoader] = useState(false)
+  const [cloudinaryUrl, setCloudinaryUrl] = useState<string>("")
   const onChange = async (event: any) => {
     setLoader(true)
     event.preventDefault();
     const formData = new FormData();
     const file = event.target.files[0];
-    console.log(event.target.files[0]);
 
 
     formData.append("inputFile", file);
@@ -28,10 +28,8 @@ const Home: NextPage = () => {
 
     if (x.newPath) {
       setLoader(false)
-
+      setCloudinaryUrl(x.newPath)
     }
-
-
   };
 
 
@@ -43,7 +41,7 @@ const Home: NextPage = () => {
 
       {
         !loader && <a
-          href="vertical.gif"
+          href={cloudinaryUrl}
           target="_blank"
           rel="noopener noreferrer" download>
           <Button>

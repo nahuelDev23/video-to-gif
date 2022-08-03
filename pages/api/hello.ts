@@ -1,7 +1,9 @@
 import { IncomingForm } from 'formidable';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import ffmpeg from 'fluent-ffmpeg'
-
+// import mv from 'mv'
+import { v2 as cloudinary } from "cloudinary";
+cloudinary.config(process.env.CLOUDINARY_URL || "")
 
 export const config = {
   api: {
@@ -32,15 +34,24 @@ export default async function handler(
       .on('error', (err) => {
         console.log(err);
       })
-      .on('end', (err) => {
-        console.log('kaajja');
-        console.log(err);
-      })
+
       .setStartTime('00:00:00')
       .setDuration('12')
       .size("500x830")
       .fps(30)
-      .saveToFile("public/vertical.gif")
+      .output("public/vertical.gif")
+      .on('end', async (err) => {
+        console.log('kaajja');
+        console.log(err);
+        const { secure_url: secureURL } = await cloudinary.uploader.upload(
+          "public/vertical.gif",
+        );
+        return res.json({ newPath: secureURL })
+
+      })
+      .run()
+    // .saveToFile("public/vertical.gif")
+
 
     // const { secure_url: secureURL } = await cloudinary.uploader.upload(
     //   result.files.image.filepath,
@@ -50,7 +61,7 @@ export default async function handler(
 
     // console.log(x);
 
-    return res.json({ newPath: 'public/vertical.gif' })
+    // return res.json({ newPath: 'public/vertical.gif' })
   } catch (error: any) {
     console.log("Error", error);
     return res.json(error.message);
