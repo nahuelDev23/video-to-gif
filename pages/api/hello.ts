@@ -1,9 +1,7 @@
 import { IncomingForm } from 'formidable';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import ffmpeg from 'fluent-ffmpeg'
-type Data = {
-  name: string
-}
+
 
 export const config = {
   api: {
@@ -12,7 +10,7 @@ export const config = {
 };
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<any>
 ) {
 
 
@@ -43,7 +41,7 @@ export default async function handler(
       .fps(60)
       .saveToFile("public/vertical.gif")
     return res.json({ newPath: 'public/vertical.gif' })
-  } catch (error) {
+  } catch (error: any) {
     console.log("Error", error);
     return res.json(error.message);
   }
