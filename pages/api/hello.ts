@@ -22,24 +22,34 @@ export default async function handler(
       resolve({ fields, files });
     });
   }) as any;
-  console.log(data?.files?.inputFile.filepath);
+
 
   const file = data?.files?.inputFile.filepath;
 
 
   try {
-    ffmpeg({ source: file })
+    const x = ffmpeg({ source: file })
       .on('error', (err) => {
         console.log(err);
       })
       .on('end', (err) => {
-        console.log('joder');
+        console.log('kaajja');
+        console.log(err);
       })
       .setStartTime('00:00:00')
       .setDuration('5')
       .size("500x830")
       .fps(30)
       .saveToFile("public/vertical.gif")
+
+    // const { secure_url: secureURL } = await cloudinary.uploader.upload(
+    //   result.files.image.filepath,
+    // );
+
+    // paths = secureURL;
+
+    // console.log(x);
+
     return res.json({ newPath: 'public/vertical.gif' })
   } catch (error: any) {
     console.log("Error", error);
