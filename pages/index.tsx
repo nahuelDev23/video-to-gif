@@ -47,7 +47,8 @@ const Home: NextPage = () => {
       {loader && 'TirandoMagia...'}
 
       {
-        !loader && <Link href="vertical.gif"
+        !loader && <Link
+          href="vertical.gif"
           target="_blank"
           rel="noopener noreferrer" download>
           <Button>

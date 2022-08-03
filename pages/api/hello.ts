@@ -38,7 +38,7 @@ export default async function handler(
       .setStartTime('00:00:00')
       .setDuration('5')
       .size("500x830")
-      .fps(60)
+      .fps(30)
       .saveToFile("public/vertical.gif")
     return res.json({ newPath: 'public/vertical.gif' })
   } catch (error: any) {
