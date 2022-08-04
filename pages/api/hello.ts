@@ -34,7 +34,7 @@ export default async function handler(
   //   ["scale=fps=15,scale=320:-1:flags=lanczos  [x]; [x][1:v] paletteuse"]
   // )
   const palette = "public/pixel.png"
-  const filters = "fps=15,scale=320:-1:flags=lanczos"
+  const filters = `fps=30,scale=${width}:-1:flags=lanczos`
   try {
     //creo el pixel
     ffmpeg({ source: file })
@@ -48,6 +48,7 @@ export default async function handler(
 
     //lo uso
     ffmpeg({ source: file })
+
       .outputOptions([
         `-i ${palette}`,
         `-lavfi`,
@@ -55,8 +56,8 @@ export default async function handler(
       ])
       .setStartTime(startTime)
       .setDuration(duration)
-      // .size(`${width}x${hight}`)//w/h
       .output("public/image.gif")
+      // .size(`500x800`)//w/h
       .on('end', async () => {
         //todo borrar lo anterior
         const { secure_url: secureURL } = await cloudinary.uploader.upload(

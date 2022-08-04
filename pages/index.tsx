@@ -73,7 +73,7 @@ const Home: NextPage = () => {
           placeholder='Alto'
           onChange={inputOnChange}
           value={hight} name='hight' />
-      </label>
+      </label> */}
       <label>
         Ancho
         <input
@@ -81,7 +81,7 @@ const Home: NextPage = () => {
           placeholder='Ancho'
           onChange={inputOnChange}
           value={width} name='width' />
-      </label> */}
+      </label>
 
       {
         !loader && <a
