@@ -21,54 +21,50 @@ export default async function handler(
 
     form.parse(req, (err, fields, files) => {
       if (err) return reject(err);
+
       resolve({ fields, files });
     });
   }) as any;
 
 
   const file = data?.files?.inputFile.filepath;
+  const { hight, width, startTime, duration } = JSON.parse(data?.fields.configs)
 
 
   try {
-    const x = ffmpeg({ source: file })
+
+
+    ffmpeg({ source: file })
       .on('error', (err) => {
         console.log(err);
       })
+      .setStartTime(startTime)
+      .setDuration(duration)
+      .outputOptions([
+        "-vf ",
+        "-filter fps=15,scale=500:-1:flags=lanczos",
+        "-y /public/palette.png",
+      ])
 
-      .setStartTime('00:00:00')
-      .setDuration('12')
-      .size("500x830")
-      .fps(30)
+      // .outputOptions('-filter_complex "[0:v][1:v] paletteuse"')
+
+      .size(`${width}x${hight}`)//w/h
+      .fps(10)
       .output("public/vertical.gif")
-      .on('end', async (err) => {
-        console.log('kaajja');
-        console.log(err);
-        const { secure_url: secureURL } = await cloudinary.uploader.upload(
-          "public/vertical.gif",
-        );
-        return res.json({ newPath: secureURL })
+
+      .on('end', async () => {
+        //todo borrar lo anterior
+        // const { secure_url: secureURL } = await cloudinary.uploader.upload(
+        //   "public/vertical.gif",
+        // );
+        // return res.json({ newPath: secureURL })
+        return res.json({ newPath: 'asdasdd' })
 
       })
       .run()
-    // .saveToFile("public/vertical.gif")
 
-
-    // const { secure_url: secureURL } = await cloudinary.uploader.upload(
-    //   result.files.image.filepath,
-    // );
-
-    // paths = secureURL;
-
-    // console.log(x);
-
-    // return res.json({ newPath: 'public/vertical.gif' })
   } catch (error: any) {
     console.log("Error", error);
     return res.json(error.message);
   }
-
-
-
-
-
 }
