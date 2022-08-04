@@ -30,38 +30,64 @@ export default async function handler(
   const file = data?.files?.inputFile.filepath;
   const { hight, width, startTime, duration } = JSON.parse(data?.fields.configs)
 
-
+  // .complexFilter(
+  //   ["scale=fps=15,scale=320:-1:flags=lanczos  [x]; [x][1:v] paletteuse"]
+  // )
+  const palette = "public/pixel.png"
+  const filters = "fps=15,scale=320:-1:flags=lanczos"
   try {
-
-
+    //creo el pixel
     ffmpeg({ source: file })
-      .on('error', (err) => {
-        console.log(err);
-      })
+      .outputOptions([
+        `-i ${file}`,
+        `-vf`,
+        `${filters},palettegen`
+      ])
+      .output("public/pixel.png")
+      .run()
+
+    //lo uso
+    ffmpeg({ source: file })
+      .outputOptions([
+        `-i ${palette}`,
+        `-lavfi`,
+        `${filters} [x];[x][1:v] paletteuse`
+      ])
       .setStartTime(startTime)
       .setDuration(duration)
-      .outputOptions([
-        "-vf ",
-        "-filter fps=15,scale=500:-1:flags=lanczos",
-        "-y /public/palette.png",
-      ])
-
-      // .outputOptions('-filter_complex "[0:v][1:v] paletteuse"')
-
-      .size(`${width}x${hight}`)//w/h
-      .fps(10)
-      .output("public/vertical.gif")
-
+      // .size(`${width}x${hight}`)//w/h
+      .output("public/image.gif")
       .on('end', async () => {
         //todo borrar lo anterior
-        // const { secure_url: secureURL } = await cloudinary.uploader.upload(
-        //   "public/vertical.gif",
-        // );
-        // return res.json({ newPath: secureURL })
-        return res.json({ newPath: 'asdasdd' })
-
+        const { secure_url: secureURL } = await cloudinary.uploader.upload(
+          "public/image.gif",
+        );
+        return res.json({ newPath: secureURL })
       })
       .run()
+    // ffmpeg({ source: file })
+    //   .on('error', (err) => {
+    //     console.log(err);
+    //   })
+    //   .setStartTime(startTime)
+    //   .setDuration(duration)
+    //   // .outputOptions([
+    //   //   "-vf ",
+    //   //   "-filter fps=15,scale=500:-1:flags=lanczos",
+    //   //   "-y /public/palette.png",
+    //   // ])
+    //   .size(`${width}x${hight}`)//w/h
+    //   .fps(10)
+    //   .output("public/vertical.gif")
+    //   .on('end', async () => {
+    //     //todo borrar lo anterior
+    //     // const { secure_url: secureURL } = await cloudinary.uploader.upload(
+    //     //   "public/vertical.gif",
+    //     // );
+    //     // return res.json({ newPath: secureURL })
+    //     return res.json({ newPath: 'asdasdd' })
+    //   })
+    //   .run()
 
   } catch (error: any) {
     console.log("Error", error);

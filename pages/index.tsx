@@ -66,7 +66,7 @@ const Home: NextPage = () => {
         <input type='text' placeholder='10' name='duration' value={duration} onChange={inputOnChange} />
         segundos
       </label>
-      <label>
+      {/* <label>
         Alto
         <input
           type="text"
@@ -81,7 +81,7 @@ const Home: NextPage = () => {
           placeholder='Ancho'
           onChange={inputOnChange}
           value={width} name='width' />
-      </label>
+      </label> */}
 
       {
         !loader && <a
