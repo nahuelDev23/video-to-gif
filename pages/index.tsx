@@ -6,7 +6,6 @@ import { useState } from 'react';
 
 
 interface InputFields {
-  hight: number;
   width: number;
   startTime: string;
   duration: string;
@@ -15,13 +14,16 @@ const Home: NextPage = () => {
   const [loader, setLoader] = useState(false)
   const [cloudinaryUrl, setCloudinaryUrl] = useState<string>("")
   const [video, setVideo] = useState()
+  const [dimensionGifResult, setDimensionGifResult] = useState<{ width: string, height: string }>({
+    width: "",
+    height: ""
+  })
   const [inputFields, setInputFields] = useState<InputFields>({
-    hight: 0,
     width: 0,
     startTime: '00:00:00',
     duration: '0',
   })
-  const { hight, width, startTime, duration } = inputFields;
+  const { width, startTime, duration } = inputFields;
 
   const inputOnChange = ({ target }: any) => {
     setInputFields({
@@ -47,7 +49,7 @@ const Home: NextPage = () => {
     });
 
     const pathOfCloudinary = await response.json()
-
+    setDimensionGifResult(pathOfCloudinary.dimension)
 
     if (pathOfCloudinary.newPath) {
       setLoader(false)
@@ -89,8 +91,10 @@ const Home: NextPage = () => {
         <Stack>
 
 
-          {cloudinaryUrl && <Box width='400px' height='400px'>
-            < Image src={cloudinaryUrl} alt='joder' layout='responsive' width='500px' height='400px' objectFit='cover' /></Box>}
+          {cloudinaryUrl &&
+            <Box >
+              < Image src={cloudinaryUrl} alt='joder' layout='responsive' width={dimensionGifResult!.width} height={dimensionGifResult!.height} objectFit='cover' />
+            </Box>}
           {
             !loader && <a
               href={cloudinaryUrl}
