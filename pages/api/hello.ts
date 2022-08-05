@@ -1,7 +1,7 @@
 import { IncomingForm } from 'formidable';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import ffmpeg from 'fluent-ffmpeg'
-import sizeOf from 'image-size'
+
 import { v2 as cloudinary } from "cloudinary";
 cloudinary.config(process.env.CLOUDINARY_URL || "")
 
@@ -78,7 +78,6 @@ const convertVideoToGif = async (req: NextApiRequest,
         console.log('Processing: ' + progress.percent + '% done');
       })
       .on('end', async () => {
-        let { width, height } = sizeOf('public/image.gif');
 
         //todo borrar lo anterior
         const { secure_url: secureURL } = await cloudinary.uploader.upload(
@@ -88,6 +87,10 @@ const convertVideoToGif = async (req: NextApiRequest,
           newPath: secureURL
         })
       })
+      // .takeScreenshots({
+      //   filename: 'example.jpg',
+      //   // count: 100
+      // }, 'public/images')
       .run()
 
   } catch (error: any) {
