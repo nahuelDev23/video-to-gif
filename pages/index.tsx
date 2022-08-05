@@ -1,23 +1,32 @@
-import { Box, Button, FormLabel, Grid, Input, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, FormLabel, Grid, Input, Stack, Text, } from '@chakra-ui/react';
+
 import type { NextPage } from 'next'
 import Image from 'next/image';
-import { useState } from 'react';
-
-
+import { useRef, useState } from 'react';
+import ReactPlayer from 'react-player'
 
 interface InputFields {
   width: number;
   startTime: string;
   duration: string;
 }
+
 const Home: NextPage = () => {
   const [loader, setLoader] = useState(false)
+  const [metadataVideo, setMetadataVideo] = useState({
+    width: "",
+    height: "",
+    duration: 0,
+  })
+  const playerRef = useRef<any>();
   const [cloudinaryUrl, setCloudinaryUrl] = useState<string>("")
   const [video, setVideo] = useState()
-  const [dimensionGifResult, setDimensionGifResult] = useState<{ width: string, height: string }>({
-    width: "",
-    height: ""
-  })
+  const [videoBlob, setVideoBlob] = useState()
+
+  // const [dimensionGifResult, setDimensionGifResult] = useState<{ width: string, height: string }>({
+  //   width: "",
+  //   height: ""
+  // })
   const [inputFields, setInputFields] = useState<InputFields>({
     width: 0,
     startTime: '00:00:00',
@@ -32,24 +41,52 @@ const Home: NextPage = () => {
     })
   }
 
-  const videoOnChange = (event: any) => {
-    setVideo(event.target.files[0])
+  // const onReady = useCallbackRef(() => {
+  //   const timeToStart = 12;
+  //   playerRef.current.seekTo(timeToStart, 'seconds');
+  // }, [playerRef.current]);
+
+  const videoOnChange = async (event: any) => {
+    const videoFile = event.target.files[0]
+
+    setVideo(videoFile)
+    let blobURL = URL.createObjectURL(videoFile) as any;
+    setVideoBlob(blobURL)
+
+    const formData = new FormData();
+
+    formData.append("inputFile", videoFile);
+
+    const response = await fetch("/api/hello?todo=getDimensionsCurrentVideo", {
+      method: "POST",
+      body: formData
+    });
+
+    const metadataVideo = await response.json()
+    setMetadataVideo(metadataVideo)
+    setInputFields({
+      ...inputFields,
+      width: metadataVideo.width
+    })
+
   }
+
   const submit = async (event: any) => {
     setLoader(true)
     event.preventDefault();
     const formData = new FormData();
+    console.log(video);
 
     formData.append("inputFile", video!);
     formData.append("configs", JSON.stringify(inputFields));
 
-    const response = await fetch("/api/hello", {
+    const response = await fetch("/api/hello?todo=convertVideoToGif", {
       method: "POST",
       body: formData
     });
 
     const pathOfCloudinary = await response.json()
-    setDimensionGifResult(pathOfCloudinary.dimension)
+    // setMetadataVideo(pathOfCloudinary.dimension)
 
     if (pathOfCloudinary.newPath) {
       setLoader(false)
@@ -88,12 +125,19 @@ const Home: NextPage = () => {
             </Button>
           </form>
         </Stack>
+
+        {
+          videoBlob && (
+            <>
+              <ReactPlayer url={videoBlob} ref={playerRef} playing controls />
+            </>
+          )
+        }
+
         <Stack>
-
-
           {cloudinaryUrl &&
-            <Box >
-              < Image src={cloudinaryUrl} alt='joder' layout='responsive' width={dimensionGifResult!.width} height={dimensionGifResult!.height} objectFit='cover' />
+            <Box>
+              <Image src={cloudinaryUrl} alt='joder' layout='responsive' width={metadataVideo!.width} height={metadataVideo!.height} objectFit='cover' />
             </Box>}
           {
             !loader && <a
@@ -106,10 +150,20 @@ const Home: NextPage = () => {
 
             </a>
           }
+          {
+            metadataVideo.width && (
+              <Stack>
+                <Text>Ancho nativo del video : {metadataVideo?.width}</Text>
+                <Text> Alto nativo del video : {metadataVideo?.height}</Text>
+                <Text> Duración del video : {metadataVideo?.duration.toString().split('.')[0]} segundos</Text>
+              </Stack>
+            )
+          }
+
         </Stack>
       </Grid>
 
-    </Stack>
+    </Stack >
   )
 }
 
