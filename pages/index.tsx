@@ -1,5 +1,6 @@
-import { Button, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, FormLabel, Grid, Input, Stack, Text } from '@chakra-ui/react';
 import type { NextPage } from 'next'
+import Image from 'next/image';
 import { useState } from 'react';
 
 
@@ -13,6 +14,7 @@ interface InputFields {
 const Home: NextPage = () => {
   const [loader, setLoader] = useState(false)
   const [cloudinaryUrl, setCloudinaryUrl] = useState<string>("")
+  const [video, setVideo] = useState()
   const [inputFields, setInputFields] = useState<InputFields>({
     hight: 0,
     width: 0,
@@ -28,13 +30,15 @@ const Home: NextPage = () => {
     })
   }
 
-  const onChange = async (event: any) => {
+  const videoOnChange = (event: any) => {
+    setVideo(event.target.files[0])
+  }
+  const submit = async (event: any) => {
     setLoader(true)
     event.preventDefault();
     const formData = new FormData();
-    const file = event.target.files[0];
 
-    formData.append("inputFile", file);
+    formData.append("inputFile", video!);
     formData.append("configs", JSON.stringify(inputFields));
 
     const response = await fetch("/api/hello", {
@@ -54,47 +58,52 @@ const Home: NextPage = () => {
 
   return (
     <Stack justifyContent='center' alignItems='center' minH='100vh'>
+      <Grid gridTemplateColumns="repeat(2,1fr)" gap='8'>
+        <Stack>
 
-      <input type="file" onChange={onChange} />
-      {loader && <Text>TirandoMagia...</Text>}
-      <label>
-        Comenzar a cortar desde
-        <input type='time' step="2" name='startTime' value={startTime} onChange={inputOnChange} />
-      </label>
-      <label>
-        Quiero que el gif dure
-        <input type='text' placeholder='10' name='duration' value={duration} onChange={inputOnChange} />
-        segundos
-      </label>
-      {/* <label>
-        Alto
-        <input
-          type="text"
-          placeholder='Alto'
-          onChange={inputOnChange}
-          value={hight} name='hight' />
-      </label> */}
-      <label>
-        Ancho
-        <input
-          type="text"
-          placeholder='Ancho'
-          onChange={inputOnChange}
-          value={width} name='width' />
-      </label>
+          <form onSubmit={submit}>
+            <Input type="file" onChange={videoOnChange} />
+            <FormLabel>
+              Comenzar a cortar desde
+              <Input type='time' step="2" name='startTime' value={startTime} onChange={inputOnChange} />
+            </FormLabel>
+            <FormLabel>
+              Quiero que el gif dure
+              <Input type='text' placeholder='10' name='duration' value={duration} onChange={inputOnChange} />
+              segundos
+            </FormLabel>
+            <FormLabel>
+              Ancho
+              <Input
+                type="text"
+                placeholder='Ancho'
+                onChange={inputOnChange}
+                value={width}
+                name='width' />
+            </FormLabel>
+            <Button type='submit'>
+              {loader ? <Text>TirandoMagia...</Text> : " Convertir video a Gif"}
+            </Button>
+          </form>
+        </Stack>
+        <Stack>
 
-      {
-        !loader && <a
-          href={cloudinaryUrl}
-          target="_blank"
-          rel="noopener noreferrer" download>
-          <Button>
-            Click para ver nudes
-          </Button>
 
-        </a>
-      }
+          {cloudinaryUrl && <Box width='400px' height='400px'>
+            < Image src={cloudinaryUrl} alt='joder' layout='responsive' width='500px' height='400px' objectFit='cover' /></Box>}
+          {
+            !loader && <a
+              href={cloudinaryUrl}
+              target="_blank"
+              rel="noopener noreferrer" download>
+              <Button>
+                Descargar Gif
+              </Button>
 
+            </a>
+          }
+        </Stack>
+      </Grid>
 
     </Stack>
   )

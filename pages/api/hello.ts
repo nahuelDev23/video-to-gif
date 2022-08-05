@@ -46,9 +46,9 @@ export default async function handler(
       .output("public/pixel.png")
       .run()
 
+    // ffmpeg({ source: file ).video
     //lo uso
     ffmpeg({ source: file })
-
       .outputOptions([
         `-i ${palette}`,
         `-lavfi`,
@@ -57,8 +57,12 @@ export default async function handler(
       .setStartTime(startTime)
       .setDuration(duration)
       .output("public/image.gif")
-      // .size(`500x800`)//w/h
-      .on('end', async () => {
+      .on('progress', function (progress) {
+        console.log('Processing: ' + progress.percent + '% done');
+      })
+      .on('end', async (stdout, stderr) => {
+        console.log({ stdout });
+
         //todo borrar lo anterior
         const { secure_url: secureURL } = await cloudinary.uploader.upload(
           "public/image.gif",
@@ -66,29 +70,7 @@ export default async function handler(
         return res.json({ newPath: secureURL })
       })
       .run()
-    // ffmpeg({ source: file })
-    //   .on('error', (err) => {
-    //     console.log(err);
-    //   })
-    //   .setStartTime(startTime)
-    //   .setDuration(duration)
-    //   // .outputOptions([
-    //   //   "-vf ",
-    //   //   "-filter fps=15,scale=500:-1:flags=lanczos",
-    //   //   "-y /public/palette.png",
-    //   // ])
-    //   .size(`${width}x${hight}`)//w/h
-    //   .fps(10)
-    //   .output("public/vertical.gif")
-    //   .on('end', async () => {
-    //     //todo borrar lo anterior
-    //     // const { secure_url: secureURL } = await cloudinary.uploader.upload(
-    //     //   "public/vertical.gif",
-    //     // );
-    //     // return res.json({ newPath: secureURL })
-    //     return res.json({ newPath: 'asdasdd' })
-    //   })
-    //   .run()
+
 
   } catch (error: any) {
     console.log("Error", error);
